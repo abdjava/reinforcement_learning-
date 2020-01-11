@@ -14,6 +14,10 @@ lr = 0.1
 discount = 0.95
 episode = 25000
 display = 2000
+epsilon = 0.5  # chance we explore instead of trying optimal action
+start_decay = 1  # which episode we start to decay
+stop_decay = episode // 2
+decay_amount = epsilon / (stop_decay - start_decay)
 
 state_size = [20] * len(env.observation_space.high)
 state_width = (env.observation_space.high - env.observation_space.low) / state_size
@@ -36,7 +40,10 @@ for ep in range(episode):
     state_d = get_discrete(env.reset())
 
     while not finished:
-        action = np.argmax(Q_table[state_d])
+        if np.random.random() > epsilon:
+            action = np.argmax(Q_table[state_d])
+        else:
+            action = np.random.randint(low=0, high=env.action_space.n)
         # doing the action
         new_s, reward, finished, _ = env.step(action)
 
@@ -58,6 +65,10 @@ for ep in range(episode):
             print("current ep = {}".format(ep))
             env.render()
 
+    if stop_decay > ep > start_decay and epsilon > 0:
+        epsilon -= decay_amount
+    elif epsilon < 0:
+        epsilon = 0
 
 env.close()
 print("program is finished ")
