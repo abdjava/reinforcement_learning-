@@ -8,7 +8,7 @@ animate = False
 lr = 0.1  # learning rate
 discount = 0.95  # discount factor
 episode = 25000
-display = 2000
+display = 500
 epsilon = 0.5  # chance we explore instead of trying optimal action
 start_decay = 1  # which episode we start to decay
 stop_decay = episode // 2
@@ -61,7 +61,7 @@ for ep in range(episode):
             Q_value_new = (1 - lr) * Q_table[state_d + (action,)] + lr * (reward + discount * Max_future)
             Q_table[state_d + (action,)] = Q_value_new
 
-        elif new_s[0] >= env.goal_position:
+        elif new_s[0] >= env.get_wrapper_attr('goal_position'):
             success_rate += 1
             Q_table[state_d + (action,)] = 0
         state_d = new_state_d
@@ -75,7 +75,7 @@ for ep in range(episode):
         epsilon = 0
 
     if ep % display == 0:
-        print(f" Last {display} success rate {success_rate / display}")
+        print(f" Last {display} ({ep}/{episode}) success rate {success_rate / display}")
         success_rate = 0
         if animate:
             fig = plt.figure()
