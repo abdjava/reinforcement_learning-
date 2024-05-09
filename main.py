@@ -1,6 +1,6 @@
-import gym
+import gymnasium as gym
 import numpy as np
-import math
+
 
 env = gym.make("MountainCar-v0")
 env.reset()
@@ -31,13 +31,13 @@ Q_table = np.random.uniform(low=-2, high=0, size=(state_size + [env.action_space
 
 def get_discrete(state):
     state_discrete = (state - env.observation_space.low) / state_width
-    return tuple(state_discrete.astype(np.int))
+    return tuple(state_discrete.astype(int))
 
 
 for ep in range(episode):
     finished = False
     # reseting enviroment and geting argmax of first q value
-    state_d = get_discrete(env.reset())
+    state_d = get_discrete(env.reset()[0])
 
     while not finished:
         if np.random.random() > epsilon:
@@ -45,8 +45,9 @@ for ep in range(episode):
         else:
             action = np.random.randint(low=0, high=env.action_space.n)
         # doing the action
-        new_s, reward, finished, _ = env.step(action)
+        new_s, reward, finished, compleat,_ = env.step(action)
 
+        finished = compleat or finished
         new_state_d = get_discrete(new_s)
 
         # calcating next action and table
