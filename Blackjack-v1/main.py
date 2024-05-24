@@ -14,7 +14,7 @@ env = gym.make('Blackjack-v1', natural=False, sab=False)
 agent = PickUnder20()
 LM = LearningManager(env, eps, discount)
 
-value_table, num_vists_table = LM.monte_carlo_estimation(agent)
+value_table, num_vists_table = LM.monte_carlo_actionvalue_estimation(agent)
 print(value_table[21, 2, 1])
 print(num_vists_table[21, 2, 1])
 
